@@ -40,11 +40,12 @@ class Avis(models.Model):
     booking_number = models.CharField(max_length=100)
     service_concerne = models.ForeignKey(Service, on_delete=models.CASCADE, null=True)
     note = models.IntegerField(choices=NOTE_CHOICES)
-    commentaire = models.TextField(blank=True) # En cas d'avis négatif, le champ deviens obligatoire pour permettre au transitaire d’expliquer les raisons de son insatisfaction.
+    commentaire = models.TextField(blank=True) # En cas d'avis negatif, le champ deviens obligatoire pour permettre au transitaire d’expliquer les raisons de son insatisfaction.
     date_submitted = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Avis du {self.date_submitted.strftime("%d/%m/%Y, %H:%M:%S")} de {self.prenom} {self.nom}"
+        formated_date = self.date_submitted.strftime("%d/%m/%Y, %H:%M:%S")
+        return f"Avis du {formated_date} de {self.prenom} {self.nom}"
 
 class Reclamation(models.Model):
     STATUTS = [
