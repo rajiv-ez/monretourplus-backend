@@ -70,6 +70,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # whitenoise pour servir les fichiers statiques
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -157,6 +158,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Templates (React index.html)
 TEMPLATES[0]["DIRS"] = [os.path.join(BASE_DIR, "templates")]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage" # compression + cache
 
 MEDIA_URL = "/media/"
 # Default primary key field type
