@@ -42,14 +42,14 @@ class AvisViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         # Email au service commercial
-        # subject = "📥 Nouvel avis client reçu"
+        # subject = " Nouvel avis client reçu"
         # message = render_to_string("emails/nouvel_avis.html", {"avis": avis})
         # email = EmailMultiAlternatives(subject, message, to=["nkomoellarajiv.pro@gmail.com"])
         # email.attach_alternative(message, "text/html")
         # email.send()
 
         # # Accusé de réception client
-        # subject_client = "✅ Votre avis a bien été reçu"
+        # subject_client = " Votre avis a bien été reçu"
         # message_client = render_to_string("emails/accuse_avis.html", {"avis": avis})
         # email_client = EmailMultiAlternatives(subject_client, message_client, to=[avis.email])
         # email_client.attach_alternative(message_client, "text/html")
@@ -119,37 +119,6 @@ class ReclamationViewSet(viewsets.ModelViewSet):
 
 
 
-class ClientMeView(APIView):
-    """Vue pour gérer les informations du client connecté."""
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        try:
-            client = Client.objects.get(user=request.user)
-            return Response(ClientSerializer(client).data)
-        except Client.DoesNotExist:
-            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
-
-    def put(self, request):
-        try:
-            client = Client.objects.get(user=request.user)
-            serializer = ClientSerializer(client, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Client.DoesNotExist:
-            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
-    
-
-
-
-
-
-
-
-
-
 
 class AvisFullViewSet(viewsets.ModelViewSet):
     """Vue pour gérer les catégories de réclamations."""
@@ -181,3 +150,101 @@ class ClientViewSet(viewsets.ModelViewSet):
         if self.action in ["list", "retrieve"]:
             return [permissions.IsAuthenticated()]
         return [permissions.AllowAny()]
+
+
+
+
+
+
+
+
+class ClientMeView2(APIView):
+    """Vue pour gérer les informations du client connecté."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        try:
+            client = Client.objects.get(user=request.user)
+            return Response(ClientSerializer(client).data)
+        except Client.DoesNotExist:
+            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request):
+        try:
+            client = Client.objects.get(user=request.user)
+            serializer = ClientSerializer(client, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Client.DoesNotExist:
+            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+    
+
+
+
+
+class ClientMeView3(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        client_id = request.query_params.get("client_id")
+        if not client_id:
+            return Response({"detail": "client_id requis"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            client = Client.objects.get(id=client_id)
+            return Response(ClientSerializer(client).data)
+        except Client.DoesNotExist:
+            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request):
+        client_id = request.data.get("id")
+        try:
+            client = Client.objects.get(id=client_id)
+            serializer = ClientSerializer(client, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Client.DoesNotExist:
+            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
+
+class ClientMeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """Retourne les informations du client lié à l'utilisateur connecté."""
+        try:
+            client = Client.objects.get(user=request.user)
+            return Response(ClientSerializer(client).data)
+        except Client.DoesNotExist:
+            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request):
+        """Mise à jour des informations du client connecté."""
+        try:
+            client = Client.objects.get(user=request.user)
+            serializer = ClientSerializer(client, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Client.DoesNotExist:
+            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request):
+        """Retourne les informations du client en utilisant user_id transmis explicitement."""
+        user_id = request.data.get("user_id")
+        if not user_id:
+            return Response({"detail": "user_id manquant"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            client = Client.objects.get(user__id=user_id)
+            return Response(ClientSerializer(client).data)
+        except Client.DoesNotExist:
+            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
