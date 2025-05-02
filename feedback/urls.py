@@ -16,6 +16,6 @@ router.register(r'services', ServiceViewSet)
 router.register(r'categories-reclamations', CategorieReclamationViewSet)
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('api/client/me/', ClientMeView.as_view(), name='client_me'),
+    path('', include(router.urls)),
+    path('client/me/', ClientMeView.as_view(), name='client_me'),
 ]

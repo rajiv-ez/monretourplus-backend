@@ -146,8 +146,18 @@ USE_TZ = True
 
 import os
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Static files (React build)
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+# Si jamais tu veux collecter les fichiers en prod :
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# Templates (React index.html)
+TEMPLATES[0]["DIRS"] = [os.path.join(BASE_DIR, "templates")]
+
 MEDIA_URL = "/media/"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
