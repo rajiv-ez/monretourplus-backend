@@ -1,0 +1,9 @@
+myvenv/
+*.pyc
+__pycache__/
+env/
+*.sqlite3
+.env
+notes.txt
+full_data.json
+dump_sqlite_data.py
