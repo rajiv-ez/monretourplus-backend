@@ -139,7 +139,7 @@ class ReclamationViewSet(viewsets.ModelViewSet):
         message_html = render_to_string("emails/notification_nouvelle_reclamation.html", {"reclamation": reclamation})
 
         send_notification_email(
-            "💬 Votre réclamation sur MonRetourMSC+", 
+            f"⚠ Nouvelle réclamation - ID: {reclamation.numero_suivi}", 
             "", 
             None,
             message_html
@@ -149,7 +149,7 @@ class ReclamationViewSet(viewsets.ModelViewSet):
         message2_html = render_to_string("emails/acknowledgment_reclamation.html", {"reclamation": reclamation})
 
         send_notification_email(
-            f"⚠ Nouvelle réclamation - ID: {reclamation.numero_suivi}", 
+            f"💬 Votre réclamation {reclamation.numero_suivi} sur MonRetourMSC+", 
             "", 
             [email_destinataire],
             message2_html
