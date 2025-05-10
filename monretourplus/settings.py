@@ -15,8 +15,8 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = ["127.0.0.1", "192.168.9.89"]
-#ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS").split(",")
+#ALLOWED_HOSTS = ["127.0.0.1", "192.168.9.89"]
+ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS").split(",")
 
 CORS_ALLOW_ALL_ORIGINS = False
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
