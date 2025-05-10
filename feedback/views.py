@@ -1,15 +1,35 @@
+from django.shortcuts import render
 from rest_framework import viewsets, generics, permissions, status
 from rest_framework.response import Response
-from .models import Avis, Reclamation, CategorieReclamation, Service, Client
-from .serializers import AvisSerializer, ReclamationSerializer, ClientSerializer, ServiceSerializer, CategorieReclamationSerializer
+from .models import Avis, Reclamation, Service, Client
+from .serializers import AvisSerializer, ReclamationSerializer, ClientSerializer, ServiceSerializer
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from mytools.email import send_notification_email
+from django.template.loader import render_to_string
 
 User = get_user_model()
+
+def test(request):
+    return render(request, "emails/statut_reclamation.html", {
+        "reclamation":{
+            "nom_structure":"EZ Audiovisuel",
+            "nom":"NKOMO ELLA",
+            "prenom":"Rajiv",
+            "email":"nkomoellarajiv.pro@gmail.com",
+            "telephone":"074676038",
+            "service_concerne":"Accueil",
+            "sujet":"Arnaque",
+            "description":"Il m'en a demandé plus que nécessaire",
+            "booking_number": "E1AZTY",
+            "numero_suivi": "DKFKIEEPPEKF8348940",
+            "statut": "En attente",
+
+        }
+    })
 
 class AvisViewSet(viewsets.ModelViewSet):
     """Vue pour gérer les avis des clients."""
@@ -27,33 +47,30 @@ class AvisViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         avis = serializer.save()
 
-        sujet =  f"⚠ Nouvel avis - { avis.note } étoiles"
-        message = f"""
-        Client : { avis.nom } { avis.prenom }
-        Structure : {avis.nom_structure }
-        Numéro de reservation : {avis.booking_number }
-        Service concerné : { avis.service_concerne }
-        Commentaire : { avis.commentaire }
-        Note : { avis.note } étoiles
-        Email : { avis.email }
-        Téléphone : { avis.telephone }    
-        """
-        send_notification_email(sujet, message, None)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+        email_destinataire = avis.email.strip() if avis.email else None
+        if not email_destinataire:
+            return Response({"error": "Adresse email manquante ou invalide."}, status=400)
+        
         # Email au service commercial
-        # subject = " Nouvel avis client reçu"
-        # message = render_to_string("emails/nouvel_avis.html", {"avis": avis})
-        # email = EmailMultiAlternatives(subject, message, to=["nkomoellarajiv.pro@gmail.com"])
-        # email.attach_alternative(message, "text/html")
-        # email.send()
+        message_html = render_to_string("emails/notification_nouvel_avis.html", {"avis": avis})
 
-        # # Accusé de réception client
-        # subject_client = " Votre avis a bien été reçu"
-        # message_client = render_to_string("emails/accuse_avis.html", {"avis": avis})
-        # email_client = EmailMultiAlternatives(subject_client, message_client, to=[avis.email])
-        # email_client.attach_alternative(message_client, "text/html")
-        # email_client.send()
+        send_notification_email(
+            "💬 Merci pour votre avis sur MonRetourMSC+", 
+            "", 
+            None,
+            message_html
+        )
+
+        # Accusée réception au client
+        message2_html = render_to_string("emails/acknowledgment_avis.html", {"avis": avis})
+
+        send_notification_email(
+            f"⚠ Nouvel avis - { avis.note } étoiles", 
+            "", 
+            [email_destinataire],
+            message2_html
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class ReclamationViewSet(viewsets.ModelViewSet):
     """Vue pour gérer les réclamations des clients."""
@@ -82,6 +99,29 @@ class ReclamationViewSet(viewsets.ModelViewSet):
 
             instance.statut = new_status
             instance.save()
+
+            
+            # Préparation de l'email
+            email_destinataire = instance.email.strip() if instance.email else None
+            if not email_destinataire:
+                return Response({"error": "Adresse email manquante ou invalide."}, status=400)
+
+            if new_status == "inProgress":
+                subject = f"📍 Votre réclamation est en cours de résolution - {instance.numero_suivi}"
+            elif new_status == "resolved":
+                subject = f"✅ Votre réclamation a été résolue - {instance.numero_suivi}"
+            template_name = "emails/statut_reclamation.html"
+
+            # Rendu HTML
+            message_html = render_to_string(template_name, {"reclamation": instance})
+
+            send_notification_email(
+                subject, 
+                "", 
+                [email_destinataire],
+                message_html
+            )
+
             return Response({"success": "Statut mis à jour"}, status=200)
         except Reclamation.DoesNotExist:
             return Response({"error": "Réclamation introuvable"}, status=404)
@@ -91,24 +131,30 @@ class ReclamationViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         reclamation = serializer.save()
 
-        sujet =  f"⚠ Nouvelle réclamation - ID: { reclamation.numero_suivi }"
-        message = f"""
-        Client : { reclamation.nom } { reclamation.prenom }
-        Structure : {reclamation.nom_structure }
-        Numéro de reservation : {reclamation.booking_number }
-        Catégorie : { reclamation.categorie }
-        Sujet : { reclamation.sujet }
-        Description : { reclamation.description }
-        Email : { reclamation.email }
-        Téléphone : { reclamation.telephone }   
+        email_destinataire = reclamation.email.strip() if reclamation.email else None
+        if not email_destinataire:
+            return Response({"error": "Adresse email manquante ou invalide."}, status=400)
 
-        Statut : { reclamation.statut }    
-        """
+        
+        message_html = render_to_string("emails/notification_nouvelle_reclamation.html", {"reclamation": reclamation})
 
-        # reclamation = self.get_queryset().get(id=response.data["id"])
-        # send_notification_email(reclamation)
+        send_notification_email(
+            "💬 Votre réclamation sur MonRetourMSC+", 
+            "", 
+            None,
+            message_html
+        )
 
-        send_notification_email(sujet, message, None)
+        # Accusée réception au client
+        message2_html = render_to_string("emails/acknowledgment_reclamation.html", {"reclamation": reclamation})
+
+        send_notification_email(
+            f"⚠ Nouvelle réclamation - ID: {reclamation.numero_suivi}", 
+            "", 
+            [email_destinataire],
+            message2_html
+        )
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -131,11 +177,6 @@ class ReclamationFullViewSet(viewsets.ModelViewSet):
     serializer_class = ReclamationSerializer
 
 
-class CategorieReclamationViewSet(viewsets.ModelViewSet):
-    """Vue pour gérer les catégories de réclamations."""
-    queryset = CategorieReclamation.objects.all().order_by('nom')
-    serializer_class = CategorieReclamationSerializer
-
 class ServiceViewSet(viewsets.ModelViewSet):
     """Vue pour gérer les services."""
     queryset = Service.objects.all().order_by('nom')
@@ -150,10 +191,6 @@ class ClientViewSet(viewsets.ModelViewSet):
         if self.action in ["list", "retrieve"]:
             return [permissions.IsAuthenticated()]
         return [permissions.AllowAny()]
-
-
-
-
 
 
 
@@ -248,3 +285,51 @@ class ClientMeView(APIView):
             return Response(ClientSerializer(client).data)
         except Client.DoesNotExist:
             return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ClientFullProfileView(APIView):
+    """
+    Vue API qui retourne le profil complet du client connecté,
+    y compris ses réclamations et ses avis.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        try:
+            client = Client.objects.get(user=request.user)
+        except Client.DoesNotExist:
+            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+
+        reclamations = Reclamation.objects.filter(client=client)
+        avis = Avis.objects.filter(client=client)
+
+        return Response({
+            "client": ClientSerializer(client).data,
+            "reclamations": ReclamationSerializer(reclamations, many=True).data,
+            "avis": AvisSerializer(avis, many=True).data
+        })
+
+class UpdateClientProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request):
+        client = Client.objects.filter(user=request.user).first()
+        data = request.data
+
+        client.nom = data.get('nom', client.nom)
+        client.prenom = data.get('prenom', client.prenom)
+        client.email = data.get('email', client.email)
+        client.nom_structure = data.get('nom_structure', client.nom_structure)
+        client.telephone = data.get('telephone', client.telephone)
+        client.save()
+
+        return Response({
+            'status': 'success',
+            'nom': client.nom,
+            'prenom': client.prenom,
+            'email': client.email,
+            'nom_structure': client.nom_structure,
+            'telephone': client.telephone,
+        })
+
+  

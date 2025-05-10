@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Merci pour votre avis</title>
+</head>
+
+<body
+    style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #ca8a04; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+        <h2 style="color: white; margin: 0;">MonRetourMSC+</h2>
+        <h1 style="color: white; margin: 0;">Merci pour votre avis</h1>
+    </div>
+
+    <div
+        style="background-color: #ffffff; padding: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <p>Cher(e) {{ avis.nom }} {{ avis.prenom }},</p>
+
+        <p>Nous vous remercions sincèrement pour l'avis {{ avis.note }} étoile(s) que vous avez partagé avec nous concernat notre service {{ avis.service_concerne }} :</p>
+        <blockquote
+            style="background-color: #f3f4f6; padding: 15px; border-left: 4px solid #ca8a04; border-radius: 6px; margin: 15px 0; font-style:italic;">
+            {{ avis.commentaire|default_if_none:'Aucun commentaire' }}
+        </blockquote>
+
+        <p>Votre avis nous aide à améliorer la qualité de nos services chaque jour.</p>
+
+        <p>Nous restons à votre disposition en cas de besoin.</p>
+
+        <p>Cordialement,<br>L'équipe MSC Gabon</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
+        <p>MSC MEDITERRANEAN SHIPPING COMPANY GABON S.A. - Service Client<br>
+            Tel: (+241) 011 70 51 35<br>
+            Email: ga671-infogabon@msc.com<br>
+            Owendo Business Center, Batiment A, 2ème étage<br>
+            Carrefour SNI - BP 18438 Owendo, GABON
+        </p>
+
+    </div>
+</body>
+
+</html>

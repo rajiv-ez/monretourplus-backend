@@ -16,5 +16,5 @@ urlpatterns = [
 
 # Sert React index.html pour toute URL non API/admin
 urlpatterns += [
-    re_path(r"^(?!api|manage|accounts|static).*", TemplateView.as_view(template_name="index.html")),
+    re_path(r"^(?!api|manage|accounts|static).*", TemplateView.as_view(template_name="index.html"), name="index"),
 ]

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Nouvelle reclamation</title>
+</head>
+
+<body
+    style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #ca8a04; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+        <h2 style="color: white; margin: 0;">MonRetourMSC+</h2>
+        <h1 style="color: white; margin: 0;">Nouvelle reclamation reçue</h1>
+    </div>
+
+    <div
+        style="background-color: #ffffff; padding: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <table style="width: 100%;">
+            <tr>
+                <th style="text-align: left;">Numéro de suivi</th>
+                <td>{{ reclamation.numero_suivi }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Sujet</th>
+                <td>{{ reclamation.statut }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Client</th>
+                <td>{{ reclamation.nom }} {{ reclamation.prenom }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Structure</th>
+                <td>{{ reclamation.nom_structure }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Numéro de booking</th>
+                <td>{{ reclamation.booking_number }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Sujet</th>
+                <td>{{ reclamation.sujet }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Description</th>
+                <td>
+                    <blockquote
+                        style="background-color: #f3f4f6; padding: 15px; border-left: 4px solid #ca8a04; border-radius: 6px; margin: 15px 0; font-style:italic;">
+                        {{ reclamation.description|default_if_none:'Aucune description' }}
+                    </blockquote>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Date</th>
+                <td>{{ reclamation.date_submitted|default_if_none:'10/05/2025' }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
+        <p>
+            <a href="{% url 'index' %}" target="_blank">Retour au site</a>
+        </p>
+
+    </div>
+</body>
+
+</html>

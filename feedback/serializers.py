@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Avis, Reclamation, Client, Service, CategorieReclamation
+from .models import Avis, Reclamation, Client, Service
 from .models import Client
 from accounts.serializers import UserSerializer
 from django.contrib.auth import get_user_model
@@ -30,11 +30,6 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = '__all__'
 
-class CategorieReclamationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CategorieReclamation
-        fields = '__all__'
-
 
 class AvisSerializer(serializers.ModelSerializer):
     service_concerne = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), write_only=True)
@@ -42,15 +37,15 @@ class AvisSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Avis
-        fields = ['id', 'client', 'note', 'commentaire', 'service_concerne', 'service_concerne_detail', 'nom_structure', 'nom', 'prenom', 'email', 'telephone', 'booking_number', 'date_submitted']
+        fields = ['id', 'client', 'note', 'commentaire', 'service_concerne', 'service_concerne_detail', 'nom_structure', 'nom', 'prenom', 'email', 'telephone', 'date_submitted']
 
 
 class ReclamationSerializer(serializers.ModelSerializer):
-    categorie = serializers.PrimaryKeyRelatedField(queryset=CategorieReclamation.objects.all(), write_only=True)
-    categorie_detail = CategorieReclamationSerializer(source="categorie", read_only=True)
+    service_concerne = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), write_only=True)
+    service_concerne_detail = ServiceSerializer(source="service_concerne", read_only=True)
 
     class Meta:
         model = Reclamation
-        fields = ['id', 'client', 'sujet', 'description', 'categorie', 'categorie_detail', 'nom_structure', 'nom', 'prenom', 'email', 'telephone', 'booking_number', 'numero_suivi', 'statut', 'date_submitted']
+        fields = ['id', 'client', 'sujet', 'description', 'service_concerne', 'service_concerne_detail', 'nom_structure', 'nom', 'prenom', 'email', 'telephone', 'booking_number', 'numero_suivi', 'statut', 'date_submitted']
 
 

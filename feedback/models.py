@@ -21,12 +21,6 @@ class Service(models.Model):
     def __str__(self):
         return self.nom
 
-class CategorieReclamation(models.Model):
-    nom = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    def __str__(self):
-        return self.nom
-
 class Avis(models.Model):
     NOTE_CHOICES = [(i, str(i)) for i in range(1, 6)]
 
@@ -37,7 +31,6 @@ class Avis(models.Model):
     email = models.EmailField()
     telephone = models.CharField(max_length=20, null=True)
 
-    booking_number = models.CharField(max_length=100)
     service_concerne = models.ForeignKey(Service, on_delete=models.CASCADE, null=True)
     note = models.IntegerField(choices=NOTE_CHOICES)
     commentaire = models.TextField(blank=True) # En cas d'avis negatif, le champ deviens obligatoire pour permettre au transitaire d’expliquer les raisons de son insatisfaction.
@@ -56,7 +49,7 @@ class Reclamation(models.Model):
     ]
 
     client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
-    categorie = models.ForeignKey(CategorieReclamation, on_delete=models.CASCADE, null=True)
+    service_concerne = models.ForeignKey(Service, on_delete=models.CASCADE, null=True)
     sujet = models.CharField(max_length=255)
     description = models.TextField()
     nom_structure = models.CharField(max_length=255)
