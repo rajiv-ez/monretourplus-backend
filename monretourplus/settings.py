@@ -15,7 +15,6 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-#ALLOWED_HOSTS = ["127.0.0.1", "192.168.9.89"]
 ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS").split(",")
 
 CORS_ALLOW_ALL_ORIGINS = False
@@ -38,11 +37,11 @@ SIMPLE_JWT = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # utilise SMTP comme backend de messagerie
-EMAIL_HOST = 'smtp.gmail.com'                                  # le serveur SMTP de Gmail
-EMAIL_PORT = 587                                               # port sécurisé pour TLS
+EMAIL_HOST = config("EMAIL_HOST")                                  # le serveur SMTP de Gmail par exemple
+EMAIL_PORT = config("EMAIL_PORT")                                               # port sécurisé pour TLS
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = True                                           # active TLS pour sécuriser la connexion
+EMAIL_USE_TLS = config("EMAIL_USE_TLS")                                       # active TLS pour sécuriser la connexion
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER                           # adresse email par défaut d'expédition
 
 # Application definition
