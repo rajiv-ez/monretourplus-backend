@@ -4,6 +4,7 @@ import uuid
 
 User = get_user_model()
 
+# Va sauter
 class Client(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     nom_structure = models.CharField(max_length=255)
@@ -14,6 +15,7 @@ class Client(models.Model):
 
     def __str__(self):
         return f"{self.nom_structure} - {self.nom} {self.prenom}"
+# Fin va sauter
     
 class Service(models.Model):
     nom = models.CharField(max_length=255)
@@ -24,7 +26,7 @@ class Service(models.Model):
 class Avis(models.Model):
     NOTE_CHOICES = [(i, str(i)) for i in range(1, 6)]
 
-    client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
+    #client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
     nom_structure = models.CharField(max_length=255)
     nom = models.CharField(max_length=255)
     prenom = models.CharField(max_length=255, null=True)
@@ -48,7 +50,7 @@ class Reclamation(models.Model):
         ("resolved", "Résolue"),
     ]
 
-    client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
+    # client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
     service_concerne = models.ForeignKey(Service, on_delete=models.CASCADE, null=True)
     sujet = models.CharField(max_length=255)
     description = models.TextField()

@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import Avis, Reclamation, Client, Service
+from .models import Avis, Reclamation, Service
+
+# Va sauter
 from .models import Client
 from accounts.serializers import UserSerializer
 from django.contrib.auth import get_user_model
-
 User = get_user_model()
-
 class ClientSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=False)
     
@@ -23,7 +23,7 @@ class ClientSerializer(serializers.ModelSerializer):
             )
             validated_data["user"] = user
         return Client.objects.create(**validated_data)
-
+# Fin Va sauter
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,8 +37,9 @@ class AvisSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Avis
-        fields = ['id', 'client', 'note', 'commentaire', 'service_concerne', 'service_concerne_detail', 'nom_structure', 'nom', 'prenom', 'email', 'telephone', 'date_submitted']
-
+        fields = ['id', 
+                  #'client', 
+                  'note', 'commentaire', 'service_concerne', 'service_concerne_detail', 'nom_structure', 'nom', 'prenom', 'email', 'telephone', 'date_submitted']
 
 class ReclamationSerializer(serializers.ModelSerializer):
     service_concerne = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), write_only=True)
@@ -46,6 +47,8 @@ class ReclamationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reclamation
-        fields = ['id', 'client', 'sujet', 'description', 'service_concerne', 'service_concerne_detail', 'nom_structure', 'nom', 'prenom', 'email', 'telephone', 'booking_number', 'numero_suivi', 'statut', 'date_submitted']
+        fields = ['id', 
+                  #'client', 
+                  'sujet', 'description', 'service_concerne', 'service_concerne_detail', 'nom_structure', 'nom', 'prenom', 'email', 'telephone', 'booking_number', 'numero_suivi', 'statut', 'date_submitted']
 
 

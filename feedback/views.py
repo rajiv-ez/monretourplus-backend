@@ -36,11 +36,11 @@ class AvisViewSet(viewsets.ModelViewSet):
     serializer_class = AvisSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        client_user_id = self.request.query_params.get("client")
-        if client_user_id:
-            return Avis.objects.filter(client__user__id=client_user_id)
-        return Avis.objects.none()
+    # def get_queryset(self):
+    #     client_user_id = self.request.query_params.get("client")
+    #     if client_user_id:
+    #         return Avis.objects.filter(client__user__id=client_user_id)
+    #     return Avis.objects.none()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
