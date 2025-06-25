@@ -72,6 +72,7 @@ class AvisViewSet(viewsets.ModelViewSet):
             [email_destinataire],
             message2_html
         )
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class ReclamationViewSet(viewsets.ModelViewSet):
