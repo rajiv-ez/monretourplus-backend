@@ -33,7 +33,9 @@ def test(request):
 
 class AvisViewSet(viewsets.ModelViewSet):
     """Vue pour gérer les avis des clients."""
+    queryset = Avis.objects.all()
     serializer_class = AvisSerializer
+    permission_classes = [permissions.AllowAny]
     #permission_classes = [permissions.IsAuthenticated]
 
     # def get_queryset(self):
@@ -74,7 +76,9 @@ class AvisViewSet(viewsets.ModelViewSet):
 
 class ReclamationViewSet(viewsets.ModelViewSet):
     """Vue pour gérer les réclamations des clients."""
+    queryset = Reclamation.objects.all()
     serializer_class = ReclamationSerializer
+    permission_classes = [permissions.AllowAny]
     # permission_classes = [permissions.IsAuthenticated]
 
     # def get_queryset(self):
