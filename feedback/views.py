@@ -34,7 +34,7 @@ def test(request):
 class AvisViewSet(viewsets.ModelViewSet):
     """Vue pour gérer les avis des clients."""
     serializer_class = AvisSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     # def get_queryset(self):
     #     client_user_id = self.request.query_params.get("client")
@@ -75,17 +75,15 @@ class AvisViewSet(viewsets.ModelViewSet):
 class ReclamationViewSet(viewsets.ModelViewSet):
     """Vue pour gérer les réclamations des clients."""
     serializer_class = ReclamationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        if self.request.user.is_staff or self.request.user.is_superuser or self.request.user.is_admin:
-            return Reclamation.objects.all()
-        
-        client_user_id = self.request.query_params.get("client")
-        if client_user_id:
-            return Reclamation.objects.filter(client__user__id=client_user_id)
-        
-        return Reclamation.objects.none()
+    # def get_queryset(self):
+    #     if self.request.user.is_staff or self.request.user.is_superuser or self.request.user.is_admin:
+    #         return Reclamation.objects.all()
+    #     client_user_id = self.request.query_params.get("client")
+    #     if client_user_id:
+    #         return Reclamation.objects.filter(client__user__id=client_user_id)
+    #     return Reclamation.objects.none()
 
     
     @action(detail=True, methods=["patch"], permission_classes=[IsAdminUser])
