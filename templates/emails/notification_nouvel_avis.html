@@ -17,12 +17,8 @@
         style="background-color: #ffffff; padding: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
         <table style="width: 100%;">
             <tr>
-                <th style="text-align: left;">Client</th>
-                <td>{{ avis.nom }} {{ avis.prenom }}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Structure</th>
-                <td>{{ avis.nom_structure }}</td>
+                <th style="text-align: left;">Email client</th>
+                <td>{{ avis.email|default:"Non fourni" }}</td>
             </tr>
             <tr>
                 <th style="text-align: left;">Note</th>
@@ -46,7 +42,7 @@
 
     <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
         <p>
-            <a href="{% url 'index' %}" target="_blank">Retour au site</a>
+            <a href="https://www.monretourplus.ga/" target="_blank">Retour au site</a>
         </p>
 
     </div>

@@ -27,12 +27,14 @@ class Avis(models.Model):
     NOTE_CHOICES = [(i, str(i)) for i in range(1, 6)]
 
     #client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
-    nom_structure = models.CharField(max_length=255)
-    nom = models.CharField(max_length=255)
-    prenom = models.CharField(max_length=255, null=True)
-    email = models.EmailField()
-    telephone = models.CharField(max_length=20, null=True)
 
+    # nom_structure = models.CharField(max_length=255)
+    # nom = models.CharField(max_length=255)
+    # prenom = models.CharField(max_length=255, null=True)
+    # telephone = models.CharField(max_length=20, null=True)
+
+    email = models.EmailField(null=True, blank=True)
+    
     service_concerne = models.ForeignKey(Service, on_delete=models.CASCADE, null=True)
     note = models.IntegerField(choices=NOTE_CHOICES)
     commentaire = models.TextField(blank=True) # En cas d'avis negatif, le champ deviens obligatoire pour permettre au transitaire d’expliquer les raisons de son insatisfaction.
@@ -51,14 +53,18 @@ class Reclamation(models.Model):
     ]
 
     # client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    # nom_structure = models.CharField(max_length=255)
+    # nom = models.CharField(max_length=255)
+    # prenom = models.CharField(max_length=255, null=True)
+    # telephone = models.CharField(max_length=20)
+    
+    email = models.EmailField(null=True, blank=True)
+    
+    description = models.TextField()
     service_concerne = models.ForeignKey(Service, on_delete=models.CASCADE, null=True)
     sujet = models.CharField(max_length=255)
-    description = models.TextField()
-    nom_structure = models.CharField(max_length=255)
-    nom = models.CharField(max_length=255)
-    prenom = models.CharField(max_length=255, null=True)
-    email = models.EmailField()
-    telephone = models.CharField(max_length=20)
+
     booking_number = models.CharField(max_length=100, null=True)
     numero_suivi = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     statut = models.CharField(max_length=50, choices=STATUTS, default="pending")

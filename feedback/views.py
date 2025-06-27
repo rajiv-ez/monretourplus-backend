@@ -16,11 +16,11 @@ User = get_user_model()
 def test(request):
     return render(request, "emails/statut_reclamation.html", {
         "reclamation":{
-            "nom_structure":"EZ Audiovisuel",
-            "nom":"NKOMO ELLA",
-            "prenom":"Rajiv",
+            # "nom_structure":"EZ Audiovisuel",
+            # "nom":"NKOMO ELLA",
+            # "prenom":"Rajiv",
             "email":"nkomoellarajiv.pro@gmail.com",
-            "telephone":"074676038",
+            # "telephone":"074676038",
             "service_concerne":"Accueil",
             "sujet":"Arnaque",
             "description":"Il m'en a demandé plus que nécessaire",
@@ -50,8 +50,6 @@ class AvisViewSet(viewsets.ModelViewSet):
         avis = serializer.save()
 
         email_destinataire = avis.email.strip() if avis.email else None
-        if not email_destinataire:
-            return Response({"error": "Adresse email manquante ou invalide."}, status=400)
         
         # Email au service commercial
         message_html = render_to_string("emails/notification_nouvel_avis.html", {"avis": avis})
@@ -63,15 +61,16 @@ class AvisViewSet(viewsets.ModelViewSet):
             message_html
         )
 
-        # Accusée réception au client
-        message2_html = render_to_string("emails/acknowledgment_avis.html", {"avis": avis})
+        # Accusée réception au client si un email est fourni  
+        if email_destinataire:
+            message2_html = render_to_string("emails/acknowledgment_avis.html", {"avis": avis})
 
-        send_notification_email(
-            f"⚠ Nouvel avis - { avis.note } étoiles", 
-            "", 
-            [email_destinataire],
-            message2_html
-        )
+            send_notification_email(
+                f"⚠ Nouvel avis - { avis.note } étoiles", 
+                "", 
+                [email_destinataire],
+                message2_html
+            )
         
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -103,12 +102,6 @@ class ReclamationViewSet(viewsets.ModelViewSet):
             instance.statut = new_status
             instance.save()
 
-            
-            # Préparation de l'email
-            email_destinataire = instance.email.strip() if instance.email else None
-            if not email_destinataire:
-                return Response({"error": "Adresse email manquante ou invalide."}, status=400)
-
             if new_status == "inProgress":
                 subject = f"📍 Votre réclamation est en cours de résolution - {instance.numero_suivi}"
             elif new_status == "resolved":
@@ -116,14 +109,21 @@ class ReclamationViewSet(viewsets.ModelViewSet):
             template_name = "emails/statut_reclamation.html"
 
             # Rendu HTML
-            message_html = render_to_string(template_name, {"reclamation": instance})
+            
+            
+            # Préparation de l'email
+            email_destinataire = instance.email.strip() if instance.email else None
+            if email_destinataire:
+                return Response({"error": "Adresse email manquante ou invalide."}, status=400)
 
-            send_notification_email(
-                subject, 
-                "", 
-                [email_destinataire],
-                message_html
-            )
+                message_html = render_to_string(template_name, {"reclamation": instance})
+
+                send_notification_email(
+                    subject, 
+                    "", 
+                    [email_destinataire],
+                    message_html
+                )
 
             return Response({"success": "Statut mis à jour"}, status=200)
         except Reclamation.DoesNotExist:
@@ -135,9 +135,6 @@ class ReclamationViewSet(viewsets.ModelViewSet):
         reclamation = serializer.save()
 
         email_destinataire = reclamation.email.strip() if reclamation.email else None
-        if not email_destinataire:
-            return Response({"error": "Adresse email manquante ou invalide."}, status=400)
-
         
         message_html = render_to_string("emails/notification_nouvelle_reclamation.html", {"reclamation": reclamation})
 
@@ -149,14 +146,15 @@ class ReclamationViewSet(viewsets.ModelViewSet):
         )
 
         # Accusée réception au client
-        message2_html = render_to_string("emails/acknowledgment_reclamation.html", {"reclamation": reclamation})
+        if email_destinataire:
+            message2_html = render_to_string("emails/acknowledgment_reclamation.html", {"reclamation": reclamation})
 
-        send_notification_email(
-            f"💬 Votre réclamation {reclamation.numero_suivi} sur MonRetourMSC+", 
-            "", 
-            [email_destinataire],
-            message2_html
-        )
+            send_notification_email(
+                f"💬 Votre réclamation {reclamation.numero_suivi} sur MonRetourMSC+", 
+                "", 
+                [email_destinataire],
+                message2_html
+            )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

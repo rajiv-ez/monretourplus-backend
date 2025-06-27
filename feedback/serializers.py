@@ -38,8 +38,8 @@ class AvisSerializer(serializers.ModelSerializer):
     class Meta:
         model = Avis
         fields = ['id', 
-                  #'client', 
-                  'note', 'commentaire', 'service_concerne', 'service_concerne_detail', 'nom_structure', 'nom', 'prenom', 'email', 'telephone', 'date_submitted']
+                  #'client', 'nom_structure', 'nom', 'prenom', 'telephone', 
+                  'note', 'commentaire', 'service_concerne', 'service_concerne_detail', 'email', 'date_submitted']
 
 class ReclamationSerializer(serializers.ModelSerializer):
     service_concerne = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), write_only=True)
@@ -48,7 +48,7 @@ class ReclamationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reclamation
         fields = ['id', 
-                  #'client', 
-                  'sujet', 'description', 'service_concerne', 'service_concerne_detail', 'nom_structure', 'nom', 'prenom', 'email', 'telephone', 'booking_number', 'numero_suivi', 'statut', 'date_submitted']
+                  #'client', 'nom_structure', 'nom', 'prenom', 'telephone', 
+                  'sujet', 'description', 'service_concerne', 'service_concerne_detail', 'email', 'booking_number', 'numero_suivi', 'statut', 'date_submitted']
 
 

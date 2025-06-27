@@ -15,9 +15,9 @@
 
     <div
         style="background-color: #ffffff; padding: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <p>Cher(e) {{ avis.nom }} {{ avis.prenom }},</p>
+        <p>Cher(e) client(e),</p>
 
-        <p>Nous vous remercions sincèrement pour l'avis {{ avis.note }} étoile(s) que vous avez partagé avec nous concernat notre service {{ avis.service_concerne }} :</p>
+        <p>Nous vous remercions sincèrement pour l'avis {{ avis.note }} étoile(s) que vous avez partagé avec nous concernant notre service {{ avis.service_concerne }} :</p>
         <blockquote
             style="background-color: #f3f4f6; padding: 15px; border-left: 4px solid #ca8a04; border-radius: 6px; margin: 15px 0; font-style:italic;">
             {{ avis.commentaire|default_if_none:'Aucun commentaire' }}
